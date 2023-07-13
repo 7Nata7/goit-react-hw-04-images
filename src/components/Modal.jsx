@@ -3,25 +3,24 @@ import React, { useEffect } from 'react';
 import css from './Modal.module.css';
 
 export const Modal = ({ imgURL, onCloseModal }) => {
-  const escapeClick = e => {
-    if (e.key === 'Escape') {
-      onCloseModal();
-    }
-  };
+  useEffect(() => {
+    const escapeClick = e => {
+      if (e.key === 'Escape') {
+        onCloseModal();
+      }
+    };
+    window.addEventListener('keydown', escapeClick);
+
+    return () => {
+      window.removeEventListener('keydown', escapeClick);
+    };
+  }, [onCloseModal]);
 
   const overlayClick = e => {
     if (e.currentTarget === e.target) {
       onCloseModal();
     }
   };
-
-  useEffect(() => {
-    window.addEventListener('keydown', escapeClick);
-
-    return () => {
-      window.removeEventListener('keydown', escapeClick);
-    };
-  });
 
   return (
     <div className={css.overlay} onClick={overlayClick}>

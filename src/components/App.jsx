@@ -26,7 +26,6 @@ const toastConfig = {
 export const App = () => {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [prevSearchQuery, setPrevSearchQuery] = useState('');
   const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadMoreBtn, setLoadMoreBtn] = useState(false);
@@ -50,14 +49,12 @@ export const App = () => {
     setPage(page + 1);
   };
 
-  const formSubmit = searchQuery => {
-    if (prevSearchQuery === searchQuery) {
+  const formSubmit = value => {
+    if (searchQuery === value) {
       toast.warn("It's the same query", toastConfig);
       return;
     }
-
-    setPrevSearchQuery(searchQuery);
-    setSearchQuery(searchQuery);
+    setSearchQuery(value);
     setPage(1);
     setImages([]);
   };
@@ -70,11 +67,15 @@ export const App = () => {
 
         const totalHits = images.totalHits;
         const totalPages = Math.ceil(totalHits / 12);
+        const isMorePages = page < totalPages;
 
         if (page === 1) {
           setImages(images.hits);
+          setLoadMoreBtn(isMorePages);
+          setPage(1);
         } else {
           setImages(prevImages => [...prevImages, ...images.hits]);
+          setLoadMoreBtn(isMorePages);
         }
 
         if (images.hits.length === 0) {
